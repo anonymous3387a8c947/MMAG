@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MMAG: Mixed Audio Generation Benchmark</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            line-height: 1.7;
+            color: #1a1a1a;
+            background-color: #fafafa;
+        }
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+            color: #000;
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            color: #555;
+            margin-top: 0.2rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #eaeaea;
+            padding-bottom: 0.8rem;
+        }
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.2rem 1.8rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            border: 1px solid #eee;
+        }
+        .section h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            color: #111;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 0.3rem;
+        }
+        .badge {
+            display: inline-block;
+            background: #e8ecf1;
+            border-radius: 6px;
+            padding: 0.2rem 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #2c3e50;
+            margin-right: 0.4rem;
+            margin-bottom: 0.3rem;
+        }
+        .dataset-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin: 1rem 0 0.5rem 0;
+        }
+        .stat-item {
+            background: #f5f7fa;
+            padding: 0.3rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            border: 1px solid #e2e6ec;
+        }
+        .stat-item strong {
+            font-weight: 600;
+        }
+        .link-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem 1.5rem;
+            margin: 0.8rem 0 0.2rem 0;
+        }
+        .link-grid a {
+            color: #1a6b8a;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dotted #b0c8d4;
+        }
+        .link-grid a:hover {
+            color: #0d3d54;
+            border-bottom: 1px solid #0d3d54;
+        }
+        .cite-box {
+            background: #f2f4f8;
+            border-radius: 6px;
+            padding: 0.8rem 1.2rem;
+            font-size: 0.9rem;
+            font-family: "SF Mono", "Menlo", monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+            border: 1px solid #e2e6ec;
+            margin: 0.6rem 0 0.2rem 0;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #e0e0e0;
+            margin: 1.6rem 0;
+        }
+        .footer {
+            font-size: 0.85rem;
+            color: #777;
+            text-align: center;
+            margin-top: 2.5rem;
+            border-top: 1px solid #eaeaea;
+            padding-top: 1.2rem;
+        }
+        a {
+            color: #1a6b8a;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎵 MMAG</h1>
+    <div class="subtitle">Multi‑Control Mixed Audio Generation Benchmark</div>
+
+    <!-- 摘要 / 简介 -->
+    <div class="section">
+        <h2>📄 Overview</h2>
+        <p>
+            <strong>MMAG</strong> is a comprehensive benchmark for evaluating mixed audio generation under multiple control conditions. 
+            It consists of a <strong>Main Set</strong> for holistic evaluation, along with two dedicated subsets for 
+            <strong>voice cloning</strong> and <strong>timestamp‑conditioned</strong> generation, enabling fine‑grained assessment 
+            of speaker identity preservation, temporal alignment, and cross‑domain acoustic fidelity.
+        </p>
+        <p>
+            The benchmark provides rich annotations covering speech content, speaker attributes, music metadata, sound events, 
+            and temporal relationships, curated through a multi‑expert annotation pipeline with human quality control.
+        </p>
+    </div>
+
+    <!-- 数据集概览 -->
+    <div class="section">
+        <h2>📊 Benchmark Statistics</h2>
+        <div class="dataset-stats">
+            <span class="stat-item"><strong>Main Set</strong> ~4,000 clips</span>
+            <span class="stat-item"><strong>Voice Cloning</strong> ~690 clips</span>
+            <span class="stat-item"><strong>Timestamp</strong> ~1,800 clips</span>
+            <span class="stat-item"><strong>Total</strong> ~6,500 clips</span>
+        </div>
+        <div style="margin: 0.8rem 0 0.2rem 0;">
+            <span class="badge">speech</span>
+            <span class="badge">music</span>
+            <span class="badge">sound effects</span>
+            <span class="badge">temporal boundaries</span>
+            <span class="badge">speaker identity</span>
+        </div>
+        <p style="margin: 0.6rem 0 0 0; font-size:0.95rem;">
+            All clips are sourced from <strong>AudioCaps</strong>, <strong>VGGSound</strong>, and <strong>MECAT</strong>.
+        </p>
+    </div>
+
+    <!-- 链接 -->
+    <div class="section">
+        <h2>🔗 Anonymized Access</h2>
+        <p style="margin-bottom:0.3rem; font-weight:500;">The dataset is available for review via the following anonymized repositories:</p>
+        <div class="link-grid">
+            <a href="https://anonymous.4open.science/r/MMAG-YYYYMMDD" target="_blank">📦 Dataset (Hugging Face)</a>
+            <a href="https://anonymous.4open.science/r/MMAG-CODE-YYYYMMDD" target="_blank">💻 Code &amp; Evaluation Scripts</a>
+        </div>
+        <p style="font-size:0.85rem; color:#666; margin-top:0.4rem;">
+            ⚠️ 这些链接通过 Anonymous GitHub 生成，确保评审期间完全匿名。
+        </p>
+    </div>
+
+    <!-- 引用 -->
+    <div class="section">
+        <h2>📖 Citation</h2>
+        <p>If you use MMAG in your research, please cite our paper:</p>
+        <div class="cite-box">
+            @article{zheng2026mmag,
+              title   = {MMAG: A Multi‑Control Mixed Audio Generation Benchmark},
+              author  = {Zihao Zheng and Xuenan Xu and Jiahao Mei and Yixuan Li and Minghao Lv and Wen Wu and Chao Zhang and Mengyue Wu},
+              journal = {arXiv preprint},
+              year    = {2026}
+            }
+        </div>
+    </div>
+
+    <!-- 许可 -->
+    <div class="section">
+        <h2>📜 License</h2>
+        <p>
+            The MMAG dataset is released under the <strong>CC BY 4.0</strong> license for non‑commercial research use. 
+            All source audio materials are sourced from publicly available datasets and are used in accordance with their original licenses.
+        </p>
+    </div>
+
+    <div class="footer">
+        MMAG &bull; Anonymous Submission &bull; ACL Rolling Review 2026
+    </div>
+
+</body>
+</html>
