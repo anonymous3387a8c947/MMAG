@@ -3,54 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MMAG: Mixed Audio Generation Benchmark</title>
+    <title>MMAG · Multi‑Control Mixed Audio Generation Benchmark</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            max-width: 900px;
+            max-width: 1300px;
             margin: 0 auto;
             padding: 2rem 1.5rem;
             line-height: 1.7;
             color: #1a1a1a;
             background-color: #fafafa;
         }
-        h1 {
-            font-size: 2.2rem;
-            font-weight: 600;
-            margin-bottom: 0.2rem;
-            color: #000;
-        }
+        h1 { font-size: 2.5rem; font-weight: 600; margin-bottom: 0.2rem; color: #000; }
         .subtitle {
             font-size: 1.2rem;
             color: #555;
             margin-top: 0.2rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             border-bottom: 2px solid #eaeaea;
             padding-bottom: 0.8rem;
         }
         .section {
             background: white;
             border-radius: 12px;
-            padding: 1.2rem 1.8rem;
-            margin: 1.5rem 0;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            padding: 1.5rem 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.05);
             border: 1px solid #eee;
         }
         .section h2 {
-            font-size: 1.4rem;
+            font-size: 1.6rem;
             font-weight: 600;
             margin-top: 0;
             margin-bottom: 0.5rem;
             color: #111;
             border-bottom: 2px solid #f0f0f0;
-            padding-bottom: 0.3rem;
+            padding-bottom: 0.4rem;
+        }
+        /* 纵向排列的图片容器 — 每张图占一行 */
+        .figure-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin: 1rem 0 0.5rem 0;
+        }
+        .figure-item {
+            background: #f5f7fa;
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid #e2e6ec;
+            text-align: center;
+        }
+        .figure-item .figure-placeholder {
+            background: #e8ecf1;
+            border-radius: 6px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 0.9rem;
+            border: 2px dashed #ccc;
+            margin-bottom: 0.6rem;
+        }
+        .figure-item .figure-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #1a1a1a;
+            margin-bottom: 0.2rem;
+        }
+        .figure-item .figure-caption {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        /* 模型网格布局 — 每行 3 个卡片 */
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.6rem 0.8rem;
+            margin-top: 0.5rem;
+        }
+        .model-card {
+            background: #f0f2f6;
+            border-radius: 6px;
+            padding: 0.3rem 0.6rem 0.5rem 0.6rem;
+            border: 1px solid #e2e6ec;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            transition: 0.1s;
+        }
+        .model-card:hover {
+            border-color: #b0c8d4;
+            background: #e8ecf2;
+        }
+        .model-card .model-name {
+            font-weight: 600;
+            font-size: 0.8rem;
+            min-width: 70px;
+            color: #1a1a1a;
+            flex-shrink: 0;
+        }
+        .model-card audio {
+            flex: 1;
+            min-width: 80px;
+            height: 32px;
+        }
+        .sample-block {
+            border: 1px solid #e2e6ec;
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            margin-top: 1.5rem;
+            background: #f9fafc;
+        }
+        .sample-block .sample-id {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1a6b8a;
+            margin-bottom: 0.4rem;
+        }
+        .caption-box {
+            background: #f7f9fc;
+            border-left: 4px solid #1a6b8a;
+            padding: 0.6rem 1rem;
+            margin: 0.4rem 0 0.8rem 0;
+            border-radius: 4px;
+            font-style: italic;
+            color: #2c3e50;
+            font-size: 0.95rem;
+        }
+        .ref-audio-label {
+            background: #d4e2ed;
+            border-radius: 4px;
+            padding: 0.15rem 0.6rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #1a4b5e;
+            margin-left: 0.3rem;
         }
         .badge {
             display: inline-block;
             background: #e8ecf1;
             border-radius: 6px;
             padding: 0.2rem 0.8rem;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 500;
             color: #2c3e50;
             margin-right: 0.4rem;
@@ -69,41 +166,19 @@
             font-size: 0.95rem;
             border: 1px solid #e2e6ec;
         }
-        .stat-item strong {
-            font-weight: 600;
-        }
-        .link-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.8rem 1.5rem;
-            margin: 0.8rem 0 0.2rem 0;
-        }
-        .link-grid a {
-            color: #1a6b8a;
+        .stat-item strong { font-weight: 600; }
+        .hf-link {
+            display: inline-block;
+            background: #1a6b8a;
+            color: white !important;
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
             text-decoration: none;
             font-weight: 500;
-            border-bottom: 1px dotted #b0c8d4;
+            margin-top: 0.5rem;
+            border-bottom: none !important;
         }
-        .link-grid a:hover {
-            color: #0d3d54;
-            border-bottom: 1px solid #0d3d54;
-        }
-        .cite-box {
-            background: #f2f4f8;
-            border-radius: 6px;
-            padding: 0.8rem 1.2rem;
-            font-size: 0.9rem;
-            font-family: "SF Mono", "Menlo", monospace;
-            white-space: pre-wrap;
-            word-break: break-all;
-            border: 1px solid #e2e6ec;
-            margin: 0.6rem 0 0.2rem 0;
-        }
-        hr {
-            border: none;
-            border-top: 1px solid #e0e0e0;
-            margin: 1.6rem 0;
-        }
+        .hf-link:hover { background: #0d4e66; }
         .footer {
             font-size: 0.85rem;
             color: #777;
@@ -112,65 +187,443 @@
             border-top: 1px solid #eaeaea;
             padding-top: 1.2rem;
         }
-        a {
-            color: #1a6b8a;
+        .note {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+        .caption-placeholder {
+            color: #999;
+            font-style: italic;
+            font-size: 0.85rem;
+        }
+        @media (max-width: 900px) {
+            .model-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .model-grid { grid-template-columns: 1fr; }
+            .model-card { flex-wrap: wrap; }
+            .model-card audio { min-width: 120px; }
         }
     </style>
 </head>
 <body>
 
-    <h1>🎵 MMAG</h1>
-    <div class="subtitle">Multi‑Control Mixed Audio Generation Benchmark</div>
+<h1>🎵 MMAG</h1>
+<div class="subtitle">Multi‑Control Mixed Audio Generation Benchmark · Anonymous</div>
 
-    <!-- 摘要 / 简介 -->
-    <div class="section">
-        <h2>📄 Overview</h2>
-        <p>
-            <strong>MMAG</strong> is a comprehensive benchmark for evaluating mixed audio generation under multiple control conditions. 
-            It consists of a <strong>Main Set</strong> for holistic evaluation, along with two dedicated subsets for 
-            <strong>voice cloning</strong> and <strong>timestamp‑conditioned</strong> generation, enabling fine‑grained assessment 
-            of speaker identity preservation, temporal alignment, and cross‑domain acoustic fidelity.
-        </p>
-        <p>
-            The benchmark provides rich annotations covering speech content, speaker attributes, music metadata, sound events, 
-            and temporal relationships, curated through a multi‑expert annotation pipeline with human quality control.
-        </p>
-    </div>
+<!-- ==================== INTRODUCTION ==================== -->
+<div class="section">
+    <h2>📄 Introduction</h2>
+    <p>
+        <strong>MMAG</strong> is a comprehensive benchmark for evaluating mixed audio generation under multiple control conditions.
+        It consists of a <strong>Main Set</strong> for holistic evaluation, along with two dedicated subsets for
+        <strong>voice cloning</strong> (Prompt Set) and <strong>timestamp‑conditioned</strong> generation (Timestamp Set),
+        enabling fine‑grained assessment of speaker identity preservation, temporal alignment, and cross‑domain acoustic fidelity.
+    </p>
+    <p>
+        All annotations are curated through a multi‑expert pipeline with human quality control.
+        <br>
+        <a class="hf-link" href="https://huggingface.co/datasets/anonymous2026082026/MMAG-Benchmark" target="_blank">🤗 View on Hugging Face</a>
+    </p>
 
-    <!-- 数据集概览 -->
-    <div class="section">
-        <h2>📊 Benchmark Statistics</h2>
-        <div class="dataset-stats">
-            <span class="stat-item"><strong>Main Set</strong> ~4,000 clips</span>
-            <span class="stat-item"><strong>Voice Cloning</strong> ~690 clips</span>
-            <span class="stat-item"><strong>Timestamp</strong> ~1,800 clips</span>
-           
+    <!-- ========== 第一张图：Intro 下面 ========== -->
+    <div style="margin-top: 1.5rem;">
+        <div class="figure-item">
+            <img src="image/intro.png" alt="Comparisons with Other Benchmarks" style="width:100%; border-radius:6px;">
+            <div class="figure-title">Comparisons with Other Benchmarks</div>
+            <div class="figure-caption">
+                <span class="caption-placeholder">Comparison of MMAG with existing benchmarks. Domain columns indicate the audio categories covered. Condition columns indicate the types of annotations or control signals provided. </span>
+            </div>
         </div>
-        <div style="margin: 0.8rem 0 0.2rem 0;">
-            <span class="badge">speech</span>
-            <span class="badge">music</span>
-            <span class="badge">sound effects</span>
-            <span class="badge">temporal boundaries</span>
-            <span class="badge">speaker identity</span>
+    </div>
+</div>
+
+<!-- ==================== CONSTRUCTION ==================== -->
+<div class="section">
+    <h2>🔧 Construction</h2>
+    <p>
+        <!-- 这里可以放一些 Construction 相关的文字描述，留空也可以 -->
+    </p>
+
+    <!-- ========== 第二张图 ========== -->
+    <div class="figure-item">
+        <img src="image/pipe.png" alt="Comparisons with Other Benchmarks" style="width:100%; border-radius:6px;">
+        <div class="figure-title">Annotation Pipeline</div>
+        <div class="figure-caption">
+            <span class="caption-placeholder">Overview of the MMAG annotation pipeline. Expert models extract fine-grained semantic, speaker, and temporal attributes from audio clips. An LLM aggregates these annotations into coherent overall and timestamped captions, while speech segments are further processed to construct voice prompts for voice cloning evaluation. Human inspection is performed to ensure annotation accuracy and quality.</span>
         </div>
-        <p style="margin: 0.6rem 0 0 0; font-size:0.95rem;">
-            All clips are sourced from <strong>AudioCaps</strong>, <strong>VGGSound</strong>, and <strong>MECAT</strong>.
+    </div>
+
+    <!-- ========== 第三张图 ========== -->
+    <div class="figure-item" style="margin-top: 1.5rem;">
+        <img src="image/caps.png" alt="Comparisons with Other Benchmarks" style="width:100%; border-radius:6px;">
+        <div class="figure-title">Caption Example Comparison</div>
+        <div class="figure-caption">
+            <span class="caption-placeholder">Illustration of the two caption types in MMAG for the same audio clip. Overall captions provide a holistic description of speech, sound events, and music with their relative temporal relationships, while timestamped captions additionally specify fine-grained temporal boundaries for speech segments and foreground sound events.</span>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== STATISTICS ==================== -->
+<div class="section">
+    <h2>📊 Benchmark Statistics</h2>
+    <div class="dataset-stats">
+        <span class="stat-item"><strong>Main Set</strong> ~4,000 clips</span>
+        <span class="stat-item"><strong>Prompt Set (Voice Cloning)</strong> ~690 clips</span>
+        <span class="stat-item"><strong>Timestamp Set</strong> ~1,800 clips</span>
+    </div>
+    <div>
+        <span class="badge">speech</span>
+        <span class="badge">music</span>
+        <span class="badge">sound effects</span>
+        <span class="badge">temporal boundaries</span>
+        <span class="badge">speaker identity</span>
+    </div>
+    <p style="margin: 0.6rem 0 0 0; font-size:0.95rem;">
+        Sourced from <strong>AudioCaps</strong>, <strong>VGGSound</strong>, and <strong>MECAT</strong>.
+    </p>
+</div>
+
+<!-- ==================== AUDIO SAMPLES ==================== -->
+
+<!-- ==================== MAIN SET ==================== -->
+<div class="section">
+    <h2>🎧 Main Set – Holistic Generation</h2>
+
+    <!-- Sample 1 -->
+    <div class="sample-block">
+        <div class="sample-id">📌 Sample #1</div>
+        <div class="caption-box">
+            <strong>📝 Caption:</strong><br>
+            A young adult male speaker in a neutral manner discusses creative methods in American English in a quiet indoor studio setting: "Tests here of colors, different goals. Zach really wanted the costume to feel ancient and broken down, so we're playing with that with our paint work here." Intermittent electronic music plays throughout, incorporating bass, drums, and synthesizer with dark, deep, and funny moods.
+        </div>
+        <div class="model-grid">
+            <div class="model-card"><span class="model-name">GT</span><audio controls src="overall/ref_audio/H6IUnmg1MVc_19_9_29_9.flac"></audio></div>
+            <div class="model-card"><span class="model-name">AuDirector</span><audio controls src="overall/AuDirector/H6IUnmg1MVc_19_9_29_9.wav"></audio></div>
+            <div class="model-card"><span class="model-name">JavisDiT++</span><audio controls src="overall/javisdit/H6IUnmg1MVc_19_9_29_9.wav"></audio></div>
+            <div class="model-card"><span class="model-name">LTX‑2</span><audio controls src="overall/ltx2/H6IUnmg1MVc_19_9_29_9.wav"></audio></div>
+            <div class="model-card"><span class="model-name">MOVA</span><audio controls src="overall/mova/H6IUnmg1MVc_19_9_29_9.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Ovi</span><audio controls src="overall/ovi/H6IUnmg1MVc_19_9_29_9.wav"></audio></div>
+            <div class="model-card"><span class="model-name">UniAVGen</span><audio controls src="overall/uniavgen/H6IUnmg1MVc_19_9_29_9.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Dasheng‑Fine</span><audio controls src="overall/dasheng_fine/H6IUnmg1MVc_19_9_29_9.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Ming‑16.8B</span><audio controls src="overall/ming_16b/H6IUnmg1MVc_19_9_29_9.wav"></audio></div>
+        </div>
+    </div>
+
+    <!-- Sample 2 -->
+    <div class="sample-block">
+        <div class="sample-id">📌 Sample #2</div>
+        <div class="caption-box">
+            <strong>📝 Caption:</strong><br>
+            A middle-aged American man is neutrally conducting a vehicle review outdoors in American English: "Hello everyone. Today, we're going to take a quick walk around and look at this 2011 Jeep Wrangler Sport." Ambient traffic noise and wind continue throughout the recording with occasional microphone wind noise. The environment suggests an outdoor urban setting like a dealership or street.
+        </div>
+        <div class="model-grid">
+            <div class="model-card"><span class="model-name">GT</span><audio controls src="overall/ref_audio/K7vWsEQYzfg_10_61665_20_6166.flac"></audio></div>
+            <div class="model-card"><span class="model-name">AuDirector</span><audio controls src="overall/AuDirector/K7vWsEQYzfg_10_61665_20_6166.wav"></audio></div>
+            <div class="model-card"><span class="model-name">JavisDiT++</span><audio controls src="overall/javisdit/K7vWsEQYzfg_10_61665_20_6166.wav"></audio></div>
+            <div class="model-card"><span class="model-name">LTX‑2</span><audio controls src="overall/ltx2/K7vWsEQYzfg_10_61665_20_6166.wav"></audio></div>
+            <div class="model-card"><span class="model-name">MOVA</span><audio controls src="overall/mova/K7vWsEQYzfg_10_61665_20_6166.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Ovi</span><audio controls src="overall/ovi/K7vWsEQYzfg_10_61665_20_6166.wav"></audio></div>
+            <div class="model-card"><span class="model-name">UniAVGen</span><audio controls src="overall/uniavgen/K7vWsEQYzfg_10_61665_20_6166.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Dasheng‑Fine</span><audio controls src="overall/dasheng_fine/K7vWsEQYzfg_10_61665_20_6166.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Ming‑16.8B</span><audio controls src="overall/ming_16b/K7vWsEQYzfg_10_61665_20_6166.wav"></audio></div>
+        </div>
+    </div>
+
+    <!-- Sample 3 -->
+    <div class="sample-block">
+        <div class="sample-id">📌 Sample #3</div>
+        <div class="caption-box">
+            <strong>📝 Caption:</strong><br>
+            A young adult male with a US accent provides neutral-toned finger-snapping instructions in English: "Your middle finger. Step 3. Let your ring finger and pinky rest against your palm. Step 4. Now quickly, swipe your middle finger down so that it hits." Electronic pop music happy with synthesizer plays throughout. A finger snap occurs at the end. Recorded in an indoor studio environment.
+        </div>
+        <div class="model-grid">
+            <div class="model-card"><span class="model-name">GT</span><audio controls src="overall/ref_audio/Oo3cKxlkQZc_30.wav"></audio></div>
+            <div class="model-card"><span class="model-name">AuDirector</span><audio controls src="overall/AuDirector/Oo3cKxlkQZc_30.wav"></audio></div>
+            <div class="model-card"><span class="model-name">JavisDiT++</span><audio controls src="overall/javisdit/Oo3cKxlkQZc_30.wav"></audio></div>
+            <div class="model-card"><span class="model-name">LTX‑2</span><audio controls src="overall/ltx2/Oo3cKxlkQZc_30.wav"></audio></div>
+            <div class="model-card"><span class="model-name">MOVA</span><audio controls src="overall/mova/Oo3cKxlkQZc_30.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Ovi</span><audio controls src="overall/ovi/Oo3cKxlkQZc_30.wav"></audio></div>
+            <div class="model-card"><span class="model-name">UniAVGen</span><audio controls src="overall/uniavgen/Oo3cKxlkQZc_30.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Dasheng‑Fine</span><audio controls src="overall/dasheng_fine/Oo3cKxlkQZc_30.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Ming‑16.8B</span><audio controls src="overall/ming_16b/Oo3cKxlkQZc_30.wav"></audio></div>
+        </div>
+    </div>
+
+    <!-- Sample 4 -->
+    <div class="sample-block">
+        <div class="sample-id">📌 Sample #4</div>
+        <div class="caption-box">
+            <strong>📝 Caption:</strong><br>
+            An elderly male narrator with a Scottish accent confidently spoke in English: "By ones and by twos. A raider infiltrates." The fearful electronic music played by drums and synthesizers ran through the entire background sound, accompanied by continuous cricket chirping, establishing an outdoor nighttime setting.
+        </div>
+        <div class="model-grid">
+            <div class="model-card"><span class="model-name">GT</span><audio controls src="overall/ref_audio/PljzqcsQ62U_30.wav"></audio></div>
+            <div class="model-card"><span class="model-name">AuDirector</span><audio controls src="overall/AuDirector/PljzqcsQ62U_30.wav"></audio></div>
+            <div class="model-card"><span class="model-name">JavisDiT++</span><audio controls src="overall/javisdit/PljzqcsQ62U_30.wav"></audio></div>
+            <div class="model-card"><span class="model-name">LTX‑2</span><audio controls src="overall/ltx2/PljzqcsQ62U_30.wav"></audio></div>
+            <div class="model-card"><span class="model-name">MOVA</span><audio controls src="overall/mova/PljzqcsQ62U_30.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Ovi</span><audio controls src="overall/ovi/PljzqcsQ62U_30.wav"></audio></div>
+            <div class="model-card"><span class="model-name">UniAVGen</span><audio controls src="overall/uniavgen/PljzqcsQ62U_30.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Dasheng‑Fine</span><audio controls src="overall/dasheng_fine/PljzqcsQ62U_30.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Ming‑16.8B</span><audio controls src="overall/ming_16b/PljzqcsQ62U_30.wav"></audio></div>
+        </div>
+    </div>
+
+    <!-- Sample 5 -->
+    <div class="sample-block">
+        <div class="sample-id">📌 Sample #5</div>
+        <div class="caption-box">
+            <strong>📝 Caption:</strong><br>
+            Energetic rock music with guitar and drums in a fun mood accompanies the clip. Near the end, a whoosh sound effect occurs, captured in a studio environment.
+        </div>
+        <div class="model-grid">
+            <div class="model-card"><span class="model-name">GT</span><audio controls src="overall/ref_audio/vDpSpjmIog8_68_69030000000001_78_6903.flac"></audio></div>
+            <div class="model-card"><span class="model-name">AuDirector</span><audio controls src="overall/AuDirector/vDpSpjmIog8_68_69030000000001_78_6903.wav"></audio></div>
+            <div class="model-card"><span class="model-name">JavisDiT++</span><audio controls src="overall/javisdit/vDpSpjmIog8_68_69030000000001_78_6903.wav"></audio></div>
+            <div class="model-card"><span class="model-name">LTX‑2</span><audio controls src="overall/ltx2/vDpSpjmIog8_68_69030000000001_78_6903.wav"></audio></div>
+            <div class="model-card"><span class="model-name">MOVA</span><audio controls src="overall/mova/vDpSpjmIog8_68_69030000000001_78_6903.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Ovi</span><audio controls src="overall/ovi/vDpSpjmIog8_68_69030000000001_78_6903.wav"></audio></div>
+            <div class="model-card"><span class="model-name">UniAVGen</span><audio controls src="overall/uniavgen/vDpSpjmIog8_68_69030000000001_78_6903.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Dasheng‑Fine</span><audio controls src="overall/dasheng_fine/vDpSpjmIog8_68_69030000000001_78_6903.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Ming‑16.8B</span><audio controls src="overall/ming_16b/vDpSpjmIog8_68_69030000000001_78_6903.wav"></audio></div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== PROMPT SET ==================== -->
+<div class="section">
+    <h2>🎤 Prompt Set – Voice Cloning</h2>
+
+    <!-- Sample 1 -->
+    <div class="sample-block">
+        <div class="sample-id">📌 Sample #1</div>
+        <div class="caption-box">
+            <strong>📝 Caption:</strong><br>
+            A male speaker aged 30-40 with an American accent speaks neutrally in English: "And you can find these depending on which one you're looking for." Background sizzling persists throughout most of the recording with intermittent handling dishes. The environment is a quiet indoor space suggesting a kitchen.
+        </div>
+        <p style="margin: 0.5rem 0 0.2rem 0;">
+            <strong>🎙️ Reference Prompt Audio</strong>
+            <span class="ref-audio-label">(ground‑truth speaker)</span>
+            <br>
+            <audio controls src="prompt/voice_prompt/8S7zsWndDfk_70.wav" style="width:100%; max-width:400px;"></audio>
         </p>
+        <div style="margin-top: 0.5rem;">
+            <div style="font-weight:600; margin-bottom:0.3rem;">Generated samples:</div>
+            <div class="model-grid">
+                <div class="model-card"><span class="model-name">GT</span><audio controls src="prompt/ref_audio/8S7zsWndDfk_70.wav"></audio></div>
+                <div class="model-card"><span class="model-name">AuDirector</span><audio controls src="prompt/AuDirector/8S7zsWndDfk_70.wav"></audio></div>
+                <div class="model-card"><span class="model-name">UniAVGen</span><audio controls src="prompt/uniavgen/8S7zsWndDfk_70.wav"></audio></div>
+                <div class="model-card"><span class="model-name">Dasheng‑Fine</span><audio controls src="prompt/dasheng_fine/8S7zsWndDfk_70.wav"></audio></div>
+                <div class="model-card"><span class="model-name">Ming‑16.8B</span><audio controls src="prompt/ming_16b/8S7zsWndDfk_70.wav"></audio></div>
+            </div>
+        </div>
     </div>
 
-
-    <!-- 许可 -->
-    <div class="section">
-        <h2>📜 License</h2>
-        <p>
-            The MMAG dataset is released under the <strong>CC BY 4.0</strong> license for non‑commercial research use. 
-            All source audio materials are sourced from publicly available datasets and are used in accordance with their original licenses.
+    <!-- Sample 2 -->
+    <div class="sample-block">
+        <div class="sample-id">📌 Sample #2</div>
+        <div class="caption-box">
+            <strong>📝 Caption:</strong><br>
+            A 20-30-year-old male speaker with an American accent explains a guitar technique in English with a neutral tone: "Minor and D, and our first strumming pattern we're gonna do is just four strums straight down, like this." Acoustic guitar unbeat playing accompanies the explanation. The audio appears to be recorded in a quiet indoor space.
+        </div>
+        <p style="margin: 0.5rem 0 0.2rem 0;">
+            <strong>🎙️ Reference Prompt Audio</strong>
+            <span class="ref-audio-label">(ground‑truth speaker)</span>
+            <br>
+            <audio controls src="prompt/voice_prompt/BRhvg3c0Jq4_30.wav" style="width:100%; max-width:400px;"></audio>
         </p>
+        <div style="margin-top: 0.5rem;">
+            <div style="font-weight:600; margin-bottom:0.3rem;">Generated samples:</div>
+            <div class="model-grid">
+                <div class="model-card"><span class="model-name">GT</span><audio controls src="prompt/ref_audio/BRhvg3c0Jq4_30.wav"></audio></div>
+                <div class="model-card"><span class="model-name">AuDirector</span><audio controls src="prompt/AuDirector/BRhvg3c0Jq4_30.wav"></audio></div>
+                <div class="model-card"><span class="model-name">UniAVGen</span><audio controls src="prompt/uniavgen/BRhvg3c0Jq4_30.wav"></audio></div>
+                <div class="model-card"><span class="model-name">Dasheng‑Fine</span><audio controls src="prompt/dasheng_fine/BRhvg3c0Jq4_30.wav"></audio></div>
+                <div class="model-card"><span class="model-name">Ming‑16.8B</span><audio controls src="prompt/ming_16b/BRhvg3c0Jq4_30.wav"></audio></div>
+            </div>
+        </div>
     </div>
 
-    <div class="footer">
-        MMAG &bull; Anonymous Submission &bull; ACL Rolling Review 2026
+    <!-- Sample 3 -->
+    <div class="sample-block">
+        <div class="sample-id">📌 Sample #3</div>
+        <div class="caption-box">
+            <strong>📝 Caption:</strong><br>
+            A happy 30-40 year old female speaker with a US accent presents a children's toy in English: "Six noises and it's very easy to move around on all surfaces as you can see. This is for ages three and above made by Just Play and requires three double A." Mechanical whirring and ticking from the toy are audible in the background. The indoor setting remains generally quiet.
+        </div>
+        <p style="margin: 0.5rem 0 0.2rem 0;">
+            <strong>🎙️ Reference Prompt Audio</strong>
+            <span class="ref-audio-label">(ground‑truth speaker)</span>
+            <br>
+            <audio controls src="prompt/voice_prompt/F7UpJnEONHk_30.wav" style="width:100%; max-width:400px;"></audio>
+        </p>
+        <div style="margin-top: 0.5rem;">
+            <div style="font-weight:600; margin-bottom:0.3rem;">Generated samples:</div>
+            <div class="model-grid">
+                <div class="model-card"><span class="model-name">GT</span><audio controls src="prompt/ref_audio/F7UpJnEONHk_30.wav"></audio></div>
+                <div class="model-card"><span class="model-name">AuDirector</span><audio controls src="prompt/AuDirector/F7UpJnEONHk_30.wav"></audio></div>
+                <div class="model-card"><span class="model-name">UniAVGen</span><audio controls src="prompt/uniavgen/F7UpJnEONHk_30.wav"></audio></div>
+                <div class="model-card"><span class="model-name">Dasheng‑Fine</span><audio controls src="prompt/dasheng_fine/F7UpJnEONHk_30.wav"></audio></div>
+                <div class="model-card"><span class="model-name">Ming‑16.8B</span><audio controls src="prompt/ming_16b/F7UpJnEONHk_30.wav"></audio></div>
+            </div>
+        </div>
     </div>
+
+    <!-- Sample 4 -->
+    <div class="sample-block">
+        <div class="sample-id">📌 Sample #4</div>
+        <div class="caption-box">
+            <strong>📝 Caption:</strong><br>
+            In a kitchen setting with dishwashing sounds, a middle-aged male with an English accent speaks neutrally in English: "It's much easier to clean up a bowl when it's soft than when it's hard." Running water is heard throughout, while clattering dishes occur intermittently.
+        </div>
+        <p style="margin: 0.5rem 0 0.2rem 0;">
+            <strong>🎙️ Reference Prompt Audio</strong>
+            <span class="ref-audio-label">(ground‑truth speaker)</span>
+            <br>
+            <audio controls src="prompt/voice_prompt/Y6i5eQOpFk_U.wav" style="width:100%; max-width:400px;"></audio>
+        </p>
+        <div style="margin-top: 0.5rem;">
+            <div style="font-weight:600; margin-bottom:0.3rem;">Generated samples:</div>
+            <div class="model-grid">
+                <div class="model-card"><span class="model-name">GT</span><audio controls src="prompt/ref_audio/Y6i5eQOpFk_U.wav"></audio></div>
+                <div class="model-card"><span class="model-name">AuDirector</span><audio controls src="prompt/AuDirector/Y6i5eQOpFk_U.wav"></audio></div>
+                <div class="model-card"><span class="model-name">UniAVGen</span><audio controls src="prompt/uniavgen/Y6i5eQOpFk_U.wav"></audio></div>
+                <div class="model-card"><span class="model-name">Dasheng‑Fine</span><audio controls src="prompt/dasheng_fine/Y6i5eQOpFk_U.wav"></audio></div>
+                <div class="model-card"><span class="model-name">Ming‑16.8B</span><audio controls src="prompt/ming_16b/Y6i5eQOpFk_U.wav"></audio></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sample 5 -->
+    <div class="sample-block">
+        <div class="sample-id">📌 Sample #5</div>
+        <div class="caption-box">
+            <strong>📝 Caption:</strong><br>
+            A happy middle-aged male speaks about having taken hydrocodone pills during video recording in American English. He states: "It was the day that I did my video and I dropped a couple of uh hydrocodones so I'm on the." A tick-tock sound happens briefly during the speech, and whistling emerges afterward. The audio occurs in a quiet indoor environment with slight reverberation.
+        </div>
+        <p style="margin: 0.5rem 0 0.2rem 0;">
+            <strong>🎙️ Reference Prompt Audio</strong>
+            <span class="ref-audio-label">(ground‑truth speaker)</span>
+            <br>
+            <audio controls src="prompt/voice_prompt/YHdxfbpnd2-8.wav" style="width:100%; max-width:400px;"></audio>
+        </p>
+        <div style="margin-top: 0.5rem;">
+            <div style="font-weight:600; margin-bottom:0.3rem;">Generated samples:</div>
+            <div class="model-grid">
+                <div class="model-card"><span class="model-name">GT</span><audio controls src="prompt/ref_audio/YHdxfbpnd2-8.wav"></audio></div>
+                <div class="model-card"><span class="model-name">AuDirector</span><audio controls src="prompt/AuDirector/YHdxfbpnd2-8.wav"></audio></div>
+                <div class="model-card"><span class="model-name">UniAVGen</span><audio controls src="prompt/uniavgen/YHdxfbpnd2-8.wav"></audio></div>
+                <div class="model-card"><span class="model-name">Dasheng‑Fine</span><audio controls src="prompt/dasheng_fine/YHdxfbpnd2-8.wav"></audio></div>
+                <div class="model-card"><span class="model-name">Ming‑16.8B</span><audio controls src="prompt/ming_16b/YHdxfbpnd2-8.wav"></audio></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ==================== TIMESTAMP SET ==================== -->
+<div class="section">
+    <h2>⏱️ Timestamp Set – Temporal Control</h2>
+
+    <!-- Sample 1 -->
+    <div class="sample-block">
+        <div class="sample-id">📌 Sample #1</div>
+        <div class="caption-box">
+            <strong>📝 Timestamped Caption:</strong><br>
+            From 0.90s to 1.15s, a dog barked. Around 4.90s to 5.14s, the dog barked again. A female speaker aged 30-40 in a neutral state stated in US English, from 5.50s to 6.90s, she said:" You can hang out in here and hide." From 6.9s to 7.3s, overlapping the end of speech, the dog barked again. From 8.60s to 9.20s, the dog barked once more. Throughout the recording, a slight echo persisted as background.
+        </div>
+        <div class="model-grid">
+            <div class="model-card"><span class="model-name">GT</span><audio controls src="timestamp/ref_audio/GdNA7R-lpdE_55.wav"></audio></div>
+            <div class="model-card"><span class="model-name">AuDirector</span><audio controls src="timestamp/AuDirector/GdNA7R-lpdE_55.wav"></audio></div>
+            <div class="model-card"><span class="model-name">LTX‑2</span><audio controls src="timestamp/ltx2/GdNA7R-lpdE_55.wav"></audio></div>
+            <div class="model-card"><span class="model-name">MOVA</span><audio controls src="timestamp/mova/GdNA7R-lpdE_55.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Ovi</span><audio controls src="timestamp/ovi/GdNA7R-lpdE_55.wav"></audio></div>
+            <div class="model-card"><span class="model-name">UniAVGen</span><audio controls src="timestamp/uniavgen/GdNA7R-lpdE_55.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Dasheng‑Fine</span><audio controls src="timestamp/dasheng_fine/GdNA7R-lpdE_55.wav"></audio></div>
+        </div>
+    </div>
+
+    <!-- Sample 2 -->
+    <div class="sample-block">
+        <div class="sample-id">📌 Sample #2</div>
+        <div class="caption-box">
+            <strong>📝 Timestamped Caption:</strong><br>
+            From 0.18 to 0.97s, a young female speaker spoke fearfully in British English:"Oh dear, someone's.".  From 2.11 to 10.00s, terrifying electronic music with a synthesizer playing. From 5.00 to 8.87 seconds, she continued:"Someone's been messing up the shit round here. Oh, here he is!" The environment suggests a controlled indoor setting with minimal background interference.
+        </div>
+        <div class="model-grid">
+            <div class="model-card"><span class="model-name">GT</span><audio controls src="timestamp/ref_audio/H61TyC6jhEM_460.wav"></audio></div>
+            <div class="model-card"><span class="model-name">AuDirector</span><audio controls src="timestamp/AuDirector/H61TyC6jhEM_460.wav"></audio></div>
+            <div class="model-card"><span class="model-name">LTX‑2</span><audio controls src="timestamp/ltx2/H61TyC6jhEM_460.wav"></audio></div>
+            <div class="model-card"><span class="model-name">MOVA</span><audio controls src="timestamp/mova/H61TyC6jhEM_460.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Ovi</span><audio controls src="timestamp/ovi/H61TyC6jhEM_460.wav"></audio></div>
+            <div class="model-card"><span class="model-name">UniAVGen</span><audio controls src="timestamp/uniavgen/H61TyC6jhEM_460.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Dasheng‑Fine</span><audio controls src="timestamp/dasheng_fine/H61TyC6jhEM_460.wav"></audio></div>
+        </div>
+    </div>
+
+    <!-- Sample 3 -->
+    <div class="sample-block">
+        <div class="sample-id">📌 Sample #3</div>
+        <div class="caption-box">
+            <strong>📝 Timestamped Caption:</strong><br>
+            A middle-aged American woman speaks neutrally in an indoor craft setting from 3.91 to 5.66s: " And then you end up with a nice fluffy rug." From 7.26 to 10.00 seconds, she continues "These work great as bathroom rugs, or if you want a larger rug,". Prior to this, 0.0 to 2.96 seconds feature rustling fabric throughout and a sewing machine starting from 1.28 to 2.96 seconds. Indoor ambience spans the entire recording.
+        </div>
+        <div class="model-grid">
+            <div class="model-card"><span class="model-name">GT</span><audio controls src="timestamp/ref_audio/LjTQA8G6hoQ_130.wav"></audio></div>
+            <div class="model-card"><span class="model-name">AuDirector</span><audio controls src="timestamp/AuDirector/LjTQA8G6hoQ_130.wav"></audio></div>
+            <div class="model-card"><span class="model-name">LTX‑2</span><audio controls src="timestamp/ltx2/LjTQA8G6hoQ_130.wav"></audio></div>
+            <div class="model-card"><span class="model-name">MOVA</span><audio controls src="timestamp/mova/LjTQA8G6hoQ_130.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Ovi</span><audio controls src="timestamp/ovi/LjTQA8G6hoQ_130.wav"></audio></div>
+            <div class="model-card"><span class="model-name">UniAVGen</span><audio controls src="timestamp/uniavgen/LjTQA8G6hoQ_130.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Dasheng‑Fine</span><audio controls src="timestamp/dasheng_fine/LjTQA8G6hoQ_130.wav"></audio></div>
+        </div>
+    </div>
+
+    <!-- Sample 4 -->
+    <div class="sample-block">
+        <div class="sample-id">📌 Sample #4</div>
+        <div class="caption-box">
+            <strong>📝 Timestamped Caption:</strong><br>
+            At the beginning, a deep ominous music with low-frequency reverberation starts and continues throughout. From 0.00s to 3.54s, a middle-aged male speaker with a US accent calmly states, "That's my inspiration to riding in the backcountry." From 3.54s to 8.28s, the deep timpani percussion occured. The entire recording suggests an open outdoor setting.
+        </div>
+        <div class="model-grid">
+            <div class="model-card"><span class="model-name">GT</span><audio controls src="timestamp/ref_audio/O_8C1feaFac_200.wav"></audio></div>
+            <div class="model-card"><span class="model-name">AuDirector</span><audio controls src="timestamp/AuDirector/O_8C1feaFac_200.wav"></audio></div>
+            <div class="model-card"><span class="model-name">LTX‑2</span><audio controls src="timestamp/ltx2/O_8C1feaFac_200.wav"></audio></div>
+            <div class="model-card"><span class="model-name">MOVA</span><audio controls src="timestamp/mova/O_8C1feaFac_200.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Ovi</span><audio controls src="timestamp/ovi/O_8C1feaFac_200.wav"></audio></div>
+            <div class="model-card"><span class="model-name">UniAVGen</span><audio controls src="timestamp/uniavgen/O_8C1feaFac_200.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Dasheng‑Fine</span><audio controls src="timestamp/dasheng_fine/O_8C1feaFac_200.wav"></audio></div>
+        </div>
+    </div>
+
+    <!-- Sample 5 -->
+    <div class="sample-block">
+        <div class="sample-id">📌 Sample #5</div>
+        <div class="caption-box">
+            <strong>📝 Timestamped Caption:</strong><br>
+            Throughout the recording: slow-tempo cello music with sad tones. From 2.415s to 3.58s, a young British man with a British accent spoke neutrally in English:"It's less obvious than going." From 5.50s to 8.10s, he said: "You know, you just kind of smooth the edges out there." Set in a quiet indoor environment with clear audio quality throughout.
+        </div>
+        <div class="model-grid">
+            <div class="model-card"><span class="model-name">GT</span><audio controls src="timestamp/ref_audio/Qsvip_fmYps_454.wav"></audio></div>
+            <div class="model-card"><span class="model-name">AuDirector</span><audio controls src="timestamp/AuDirector/Qsvip_fmYps_454.wav"></audio></div>
+            <div class="model-card"><span class="model-name">LTX‑2</span><audio controls src="timestamp/ltx2/Qsvip_fmYps_454.wav"></audio></div>
+            <div class="model-card"><span class="model-name">MOVA</span><audio controls src="timestamp/mova/Qsvip_fmYps_454.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Ovi</span><audio controls src="timestamp/ovi/Qsvip_fmYps_454.wav"></audio></div>
+            <div class="model-card"><span class="model-name">UniAVGen</span><audio controls src="timestamp/uniavgen/Qsvip_fmYps_454.wav"></audio></div>
+            <div class="model-card"><span class="model-name">Dasheng‑Fine</span><audio controls src="timestamp/dasheng_fine/Qsvip_fmYps_454.wav"></audio></div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<div class="footer">
+    MMAG &bull; Anonymous Submission &bull; ACL Rolling Review 2026
+</div>
 
 </body>
 </html>
