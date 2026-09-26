@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MMAG · Multi‑Control Mixed Audio Generation Benchmark</title>
+
+    <!-- DataTables CSS (清新风格) -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <!-- jQuery (DataTables 依赖) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -14,14 +22,73 @@
             color: #1a1a1a;
             background-color: #fafafa;
         }
-        h1 { font-size: 2.5rem; font-weight: 600; margin-bottom: 0.2rem; color: #000; }
+        h1 { 
+            font-size: 2.5rem; 
+            font-weight: 600; 
+            margin-bottom: 0.2rem; 
+            color: #000;
+            text-align: center;
+        }
         .subtitle {
             font-size: 1.2rem;
             color: #555;
             margin-top: 0.2rem;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid #eaeaea;
-            padding-bottom: 0.8rem;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.4rem;
+            text-align: center;
+        }
+        .author-block {
+            text-align: center;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin: 0.2rem 0 1.2rem 0;
+        }
+        .author-block .names {
+            font-weight: 500;
+            font-size: 1rem;
+            margin-bottom: 0.1rem;
+        }
+        .author-block .affiliations {
+            font-size: 0.85rem;
+            color: #555;
+        }
+        .author-block .email {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.2rem;
+        }
+        .icon-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin: 0.2rem 0 2rem 0;
+        }
+        .icon-links a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1.2rem;
+            border: 1px solid #d0d7de;
+            border-radius: 30px;
+            background: #ffffff;
+            color: #24292f;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: 0.15s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .icon-links a:hover {
+            background: #f3f4f6;
+            border-color: #b0b8c4;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.04);
+        }
+        .icon-links a img {
+            height: 1.1rem;
+            width: auto;
+            display: block;
         }
         .section {
             background: white;
@@ -40,31 +107,12 @@
             border-bottom: 2px solid #f0f0f0;
             padding-bottom: 0.4rem;
         }
-        /* 纵向排列的图片容器 — 每张图占一行 */
-        .figure-vertical {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-            margin: 1rem 0 0.5rem 0;
-        }
         .figure-item {
             background: #f5f7fa;
             border-radius: 8px;
             padding: 1rem;
             border: 1px solid #e2e6ec;
             text-align: center;
-        }
-        .figure-item .figure-placeholder {
-            background: #e8ecf1;
-            border-radius: 6px;
-            height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #888;
-            font-size: 0.9rem;
-            border: 2px dashed #ccc;
-            margin-bottom: 0.6rem;
         }
         .figure-item .figure-title {
             font-weight: 600;
@@ -76,7 +124,6 @@
             font-size: 0.85rem;
             color: #666;
         }
-        /* 模型网格布局 — 每行 3 个卡片 */
         .model-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -92,11 +139,6 @@
             align-items: center;
             gap: 0.4rem;
             flex-wrap: wrap;
-            transition: 0.1s;
-        }
-        .model-card:hover {
-            border-color: #b0c8d4;
-            background: #e8ecf2;
         }
         .model-card .model-name {
             font-weight: 600;
@@ -110,19 +152,6 @@
             min-width: 80px;
             height: 32px;
         }
-        .sample-block {
-            border: 1px solid #e2e6ec;
-            border-radius: 8px;
-            padding: 1rem 1.2rem;
-            margin-top: 1.5rem;
-            background: #f9fafc;
-        }
-        .sample-block .sample-id {
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: #1a6b8a;
-            margin-bottom: 0.4rem;
-        }
         .caption-box {
             background: #f7f9fc;
             border-left: 4px solid #1a6b8a;
@@ -133,40 +162,6 @@
             color: #2c3e50;
             font-size: 0.95rem;
         }
-        .ref-audio-label {
-            background: #d4e2ed;
-            border-radius: 4px;
-            padding: 0.15rem 0.6rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #1a4b5e;
-            margin-left: 0.3rem;
-        }
-        .badge {
-            display: inline-block;
-            background: #e8ecf1;
-            border-radius: 6px;
-            padding: 0.2rem 0.8rem;
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: #2c3e50;
-            margin-right: 0.4rem;
-            margin-bottom: 0.3rem;
-        }
-        .dataset-stats {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.2rem;
-            margin: 1rem 0 0.5rem 0;
-        }
-        .stat-item {
-            background: #f5f7fa;
-            padding: 0.3rem 1.2rem;
-            border-radius: 30px;
-            font-size: 0.95rem;
-            border: 1px solid #e2e6ec;
-        }
-        .stat-item strong { font-weight: 600; }
         .hf-link {
             display: inline-block;
             background: #1a6b8a;
@@ -176,7 +171,6 @@
             text-decoration: none;
             font-weight: 500;
             margin-top: 0.5rem;
-            border-bottom: none !important;
         }
         .hf-link:hover { background: #0d4e66; }
         .footer {
@@ -187,17 +181,25 @@
             border-top: 1px solid #eaeaea;
             padding-top: 1.2rem;
         }
-        .note {
-            font-size: 0.85rem;
-            color: #888;
-            margin-top: 0.5rem;
-            text-align: center;
-        }
         .caption-placeholder {
             color: #999;
             font-style: italic;
             font-size: 0.85rem;
         }
+        /* 表格数据列居中，Model 列左对齐 */
+        table.dataTable tbody td:not(:first-child) {
+            text-align: center;
+        }
+        /* 表头指标列居中 */
+        table.dataTable thead th:not(:first-child) {
+            text-align: center;
+        }
+        /* DataTables 适配 */
+        .table-wrapper { overflow-x: auto; }
+        table.dataTable thead th { border-bottom: 2px solid #ddd; font-weight: 600; }
+        table.dataTable.no-footer { border-bottom: 1px solid #e2e6ec; }
+        .dataTables_wrapper .dataTables_filter input { border: 1px solid #ccc; border-radius: 4px; padding: 4px 8px; }
+        .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_paginate { font-size: 0.85rem; color: #666; }
         @media (max-width: 900px) {
             .model-grid { grid-template-columns: repeat(2, 1fr); }
         }
@@ -205,29 +207,54 @@
             .model-grid { grid-template-columns: 1fr; }
             .model-card { flex-wrap: wrap; }
             .model-card audio { min-width: 120px; }
+            .icon-links a { padding: 0.3rem 0.8rem; font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
 
-<h1>🎵 MMAG</h1>
-<div class="subtitle">Multi‑Control Mixed Audio Generation Benchmark · Anonymous</div>
 
+<h1>🎵 MMAG</h1>
+<div class="subtitle">A Multi‑Control Mixed Audio Generation Benchmark</div>
+
+<!-- 作者信息（无横线、无方块） -->
+<div class="author-block">
+    <div class="names">
+       Anonymous Authors
+    </div>
+</div>
+
+<!-- 图标链接栏（带框，使用 Simple Icons 官方 SVG） -->
+<div class="icon-links">
+    <a href="https://anonymous-hf.com/a/w8zbhebrzaoq/">
+        <span style="font-size: 1.2rem; line-height: 1;">🤗</span> Datasets
+    </a>
+</div>
+<!-- ==================== INTRODUCTION ==================== -->
 <!-- ==================== INTRODUCTION ==================== -->
 <div class="section">
     <h2>📄 Introduction</h2>
     <p>
-        <strong>MMAG</strong> is a comprehensive benchmark for evaluating mixed audio generation under multiple control conditions.
-        It consists of a <strong>Main Set</strong> for holistic evaluation, along with two dedicated subsets for
-        <strong>voice cloning</strong> (Prompt Set) and <strong>timestamp‑conditioned</strong> generation (Timestamp Set),
-        enabling fine‑grained assessment of speaker identity preservation, temporal alignment, and cross‑domain acoustic fidelity.
+        <strong>MMAG</strong> (Multi‑Control Mixed Audio Generation) is a comprehensive benchmark for evaluating mixed audio generation under multiple control conditions. It addresses the lack of evaluation resources for emerging mixed-audio generation systems that synthesize complex acoustic scenes containing speech, music, and sound effects simultaneously.
     </p>
+    <ul style="margin-top:0.3rem; margin-bottom:0.5rem; padding-left:1.5rem; list-style-type:none;">
+        <li style="margin-bottom:0.2rem;">
+            <span class="badge">① Main Set</span> 
+            text‑only control for holistic assessment — <strong>~4,000 clips</strong>
+        </li>
+        <li style="margin-bottom:0.2rem;">
+            <span class="badge">② Voice Cloning Set</span> 
+            speaker identity control via short voice prompt — <strong>~690 clips</strong>
+        </li>
+        <li style="margin-bottom:0.2rem;">
+            <span class="badge">③ Timestamp Set</span> 
+            temporal control via timestamp‑detailed captions — <strong>~1,800 clips</strong>
+        </li>
+    </ul>
     <p>
-        All annotations are curated through a multi‑expert pipeline with human quality control.
-        <br>
-        <a class="hf-link" href="https://huggingface.co/datasets/anonymous2026082026/MMAG-Benchmark" target="_blank">🤗 View on Hugging Face</a>
+        We select cross‑domain audio samples from <strong>AudioCaps</strong>, <strong>VGGSound</strong>, and <strong>MECAT</strong>, and construct detailed captions covering speech transcriptions, speaker attributes (age, gender, dialect, emotion), sound events, musical information (genre, instruments, mood), and temporal ordering. All annotations are curated through a multi‑expert pipeline with manual verification.
     </p>
-
+    
     <!-- ========== 第一张图：Intro 下面 ========== -->
     <div style="margin-top: 1.5rem;">
         <div class="figure-item">
@@ -252,7 +279,7 @@
         <img src="image/pipe.png" alt="Comparisons with Other Benchmarks" style="width:100%; border-radius:6px;">
         <div class="figure-title">Annotation Pipeline</div>
         <div class="figure-caption">
-            <span class="caption-placeholder">Overview of the MMAG annotation pipeline. Expert models extract fine-grained semantic, speaker, and temporal attributes from audio clips. An LLM aggregates these annotations into coherent overall and timestamped captions, while speech segments are further processed to construct voice prompts for voice cloning evaluation. Human inspection is performed to ensure annotation accuracy and quality.</span>
+            <span class="caption-placeholder">Overview of the MMAG annotation pipeline. Expert models extract fine-grained attributes from audio clips. An LLM aggregates these annotations into coherent overall and timestamped captions, while speech segments are further processed to construct voice prompts for voice cloning evaluation. Human inspection is performed to ensure annotation quality.</span>
         </div>
     </div>
 
@@ -261,36 +288,17 @@
         <img src="image/caps.png" alt="Comparisons with Other Benchmarks" style="width:100%; border-radius:6px;">
         <div class="figure-title">Caption Example Comparison</div>
         <div class="figure-caption">
-            <span class="caption-placeholder">Illustration of the two caption types in MMAG for the same audio clip. Overall captions provide a holistic description of speech, sound events, and music with their relative temporal relationships, while timestamped captions additionally specify fine-grained temporal boundaries for speech segments and foreground sound events.</span>
+            <span class="caption-placeholder">Illustrative example of two caption types for the same audio clip. Overall captions annotate speech, sound, and music, along with relative temporal order. Timestamped captions provide precise timestamps for foreground events and speech segments.</span>
         </div>
     </div>
 </div>
 
-<!-- ==================== STATISTICS ==================== -->
-<div class="section">
-    <h2>📊 Benchmark Statistics</h2>
-    <div class="dataset-stats">
-        <span class="stat-item"><strong>Main Set</strong> ~4,000 clips</span>
-        <span class="stat-item"><strong>Prompt Set (Voice Cloning)</strong> ~690 clips</span>
-        <span class="stat-item"><strong>Timestamp Set</strong> ~1,800 clips</span>
-    </div>
-    <div>
-        <span class="badge">speech</span>
-        <span class="badge">music</span>
-        <span class="badge">sound effects</span>
-        <span class="badge">temporal boundaries</span>
-        <span class="badge">speaker identity</span>
-    </div>
-    <p style="margin: 0.6rem 0 0 0; font-size:0.95rem;">
-        Sourced from <strong>AudioCaps</strong>, <strong>VGGSound</strong>, and <strong>MECAT</strong>.
-    </p>
-</div>
 
 <!-- ==================== AUDIO SAMPLES ==================== -->
 
 <!-- ==================== MAIN SET ==================== -->
 <div class="section">
-    <h2>🎧 Main Set – Holistic Generation</h2>
+    <h2>🎧 Main Set</h2>
 
     <!-- Sample 1 -->
     <div class="sample-block">
@@ -405,7 +413,7 @@
 
 <!-- ==================== PROMPT SET ==================== -->
 <div class="section">
-    <h2>🎤 Prompt Set – Voice Cloning</h2>
+    <h2>🎤 Voice Cloning Set </h2>
 
     <!-- Sample 1 -->
     <div class="sample-block">
@@ -536,7 +544,7 @@
 
 <!-- ==================== TIMESTAMP SET ==================== -->
 <div class="section">
-    <h2>⏱️ Timestamp Set – Temporal Control</h2>
+    <h2>⏱️ Timestamp Set</h2>
 
     <!-- Sample 1 -->
     <div class="sample-block">
@@ -635,10 +643,196 @@
 
 </div>
 
+<!-- ==================== MAIN SET ==================== -->
+<div class="section">
+    <h2>📊 Main Set Results</h2>
+    <p style="font-size:0.9rem; color:#555; margin-top:-0.2rem;">
+        Click any column header to sort.
+    </p>
+    <div class="table-wrapper">
+        <table id="mainTable" class="display" style="width:100%;">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="text-align:center;" id="model-header">Model</th>
+                    <th colspan="5" style="text-align:center;">Acoustic</th>
+                    <th colspan="2" style="text-align:center;">Speech</th>
+                    <th colspan="2" style="text-align:center;">Semantic</th>
+                </tr>
+                <tr>
+                    <th>FD↓</th>
+                    <th>KL↓</th>
+                    <th>IS↑</th>
+                    <th>PC↑</th>
+                    <th>PQ↑</th>
+                    <th>WER↓</th>
+                    <th>UTMOS<sub>v2</sub>↑</th>
+                    <th>CLAP↑</th>
+                    <th>AAJ↑</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>AuDirector</td><td>5.19</td><td>1.60</td><td>2.62</td><td>3.69</td><td>6.71</td><td>0.08</td><td>2.68</td><td>0.34</td><td>0.76</td></tr>
+                <tr><td>LTX-2</td><td>2.89</td><td>1.31</td><td>2.90</td><td>3.04</td><td>7.22</td><td>0.04</td><td>2.90</td><td>0.34</td><td>0.76</td></tr>
+                <tr><td>Ovi</td><td>3.91</td><td>1.50</td><td>2.06</td><td>2.60</td><td>6.05</td><td>0.13</td><td>2.25</td><td>0.30</td><td>0.74</td></tr>
+                <tr><td>MOVA</td><td>4.38</td><td>1.28</td><td>2.59</td><td>2.98</td><td>6.74</td><td>0.15</td><td>2.69</td><td>0.31</td><td>0.78</td></tr>
+                <tr><td>JavisDiT++</td><td>5.58</td><td>1.47</td><td>3.49</td><td>3.84</td><td>5.98</td><td>--</td><td>1.64</td><td>0.30</td><td>0.59</td></tr>
+                <tr><td>UniAVGen</td><td>10.19</td><td>2.28</td><td>1.44</td><td>2.35</td><td>6.75</td><td>0.10</td><td>3.00</td><td>0.25</td><td>0.64</td></tr>
+                <tr><td>Dasheng-AudioGen-Base</td><td>1.78</td><td>0.87</td><td>3.17</td><td>3.55</td><td>6.67</td><td>0.11</td><td>2.77</td><td>0.34</td><td>0.80</td></tr>
+                <tr><td>Dasheng-AudioGen-Fine</td><td>1.79</td><td>0.89</td><td>3.11</td><td>3.64</td><td>6.79</td><td>0.11</td><td>2.76</td><td>0.33</td><td>0.80</td></tr>
+                <tr><td>Ming-Omni-TTS-0.5B</td><td>8.72</td><td>2.80</td><td>1.56</td><td>1.60</td><td>7.35</td><td>0.03</td><td>3.43</td><td>0.26</td><td>0.65</td></tr>
+                <tr><td>Ming-Omni-TTS-16.8B</td><td>7.98</td><td>2.46</td><td>1.65</td><td>1.79</td><td>7.14</td><td>0.03</td><td>3.33</td><td>0.27</td><td>0.67</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p style="font-size:0.85rem; color:#888; margin-top:0.3rem;">
+        ↑ / ↓ indicate better direction.
+    </p>
+</div>
+
+<!-- ==================== VOICE CLONING SET ==================== -->
+<div class="section">
+    <h2>🎤 Voice Cloning Set Results</h2>
+    <p style="font-size:0.9rem; color:#555; margin-top:-0.2rem;">
+        Click any column header to sort.
+    </p>
+    <div class="table-wrapper">
+        <table id="voiceTable" class="display" style="width:100%;">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="text-align:center;" id="voice-model-header">Model</th>
+                    <th colspan="5" style="text-align:center;">Acoustic</th>
+                    <th colspan="3" style="text-align:center;">Speech</th>
+                    <th colspan="2" style="text-align:center;">Semantic</th>
+                </tr>
+                <tr>
+                    <th>FD↓</th>
+                    <th>KL↓</th>
+                    <th>IS↑</th>
+                    <th>PC↑</th>
+                    <th>PQ↑</th>
+                    <th>WER↓</th>
+                    <th>SPK‑SIM↑</th>
+                    <th>UTMOS<sub>v2</sub>↑</th>
+                    <th>CLAP↑</th>
+                    <th>AAJ↑</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>AuDirector</td><td>3.80</td><td>2.11</td><td>2.61</td><td>3.54</td><td>5.56</td><td>0.10</td><td>0.72</td><td>2.32</td><td>0.35</td><td>0.75</td></tr>
+                <tr><td>UniAVGen</td><td>6.70</td><td>2.58</td><td>1.58</td><td>3.28</td><td>5.84</td><td>0.28</td><td>0.67</td><td>2.40</td><td>0.26</td><td>0.70</td></tr>
+                <tr><td>Ming-Omni-TTS-0.5B</td><td>8.72</td><td>3.32</td><td>1.26</td><td>1.81</td><td>6.54</td><td>0.06</td><td>0.76</td><td>2.85</td><td>0.26</td><td>0.66</td></tr>
+                <tr><td>Ming-Omni-TTS-16.8B</td><td>7.39</td><td>2.99</td><td>1.38</td><td>2.12</td><td>6.43</td><td>0.04</td><td>0.78</td><td>2.79</td><td>0.27</td><td>0.68</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p style="font-size:0.85rem; color:#888; margin-top:0.3rem;">
+        ↑ / ↓ indicate better direction.
+    </p>
+</div>
+
+<!-- ==================== TIMESTAMP SET ==================== -->
+<div class="section">
+    <h2>⏱️ Timestamp Set Results</h2>
+    <p style="font-size:0.9rem; color:#555; margin-top:-0.2rem;">
+        Click any column header to sort.
+    </p>
+    <div class="table-wrapper">
+        <table id="timestampTable" class="display" style="width:100%;">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="text-align:center;" id="timestamp-model-header">Model</th>
+                    <th colspan="5" style="text-align:center;">Acoustic</th>
+                    <th colspan="2" style="text-align:center;">Speech</th>
+                    <th colspan="2" style="text-align:center;">Semantic</th>
+                    <th colspan="2" style="text-align:center;">Temporal</th>
+                </tr>
+                <tr>
+                    <th>FD↓</th>
+                    <th>KL↓</th>
+                    <th>IS↑</th>
+                    <th>PC↑</th>
+                    <th>PQ↑</th>
+                    <th>WER↓</th>
+                    <th>UTMOS<sub>v2</sub>↑</th>
+                    <th>CLAP↑</th>
+                    <th>AAJ↑</th>
+                    <th>Speech<sub>F1</sub>↑</th>
+                    <th>Sound<sub>F1</sub>↑</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>AuDirector</td><td>6.59</td><td>2.01</td><td>3.08</td><td>4.16</td><td>6.19</td><td>0.15</td><td>2.31</td><td>0.35</td><td>0.78</td><td>0.72</td><td>0.57</td></tr>
+                <tr><td>LTX-2</td><td>2.38</td><td>1.46</td><td>3.35</td><td>3.35</td><td>6.97</td><td>0.05</td><td>2.74</td><td>0.33</td><td>0.77</td><td>0.64</td><td>0.44</td></tr>
+                <tr><td>Ovi</td><td>3.99</td><td>1.67</td><td>2.23</td><td>2.74</td><td>6.05</td><td>0.19</td><td>2.12</td><td>0.27</td><td>0.78</td><td>0.65</td><td>0.39</td></tr>
+                <tr><td>MOVA</td><td>4.36</td><td>1.82</td><td>2.91</td><td>2.85</td><td>6.69</td><td>0.14</td><td>2.47</td><td>0.29</td><td>0.77</td><td>0.63</td><td>0.42</td></tr>
+                <tr><td>UniAVGen</td><td>11.18</td><td>2.52</td><td>1.39</td><td>2.66</td><td>6.56</td><td>0.15</td><td>2.90</td><td>0.23</td><td>0.67</td><td>0.63</td><td>0.29</td></tr>
+                <tr><td>Dasheng-AudioGen-Base</td><td>1.96</td><td>1.10</td><td>3.67</td><td>3.47</td><td>3.48</td><td>0.43</td><td>2.68</td><td>0.31</td><td>0.78</td><td>0.60</td><td>0.41</td></tr>
+                <tr><td>Dasheng-AudioGen-Fine</td><td>1.77</td><td>1.09</td><td>3.76</td><td>3.49</td><td>6.64</td><td>0.13</td><td>2.65</td><td>0.31</td><td>0.80</td><td>0.62</td><td>0.42</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p style="font-size:0.85rem; color:#888; margin-top:0.3rem;">
+        ↑ / ↓ indicate better direction.
+    </p>
+</div>
+
 <!-- Footer -->
 <div class="footer">
-    MMAG &bull; Anonymous Submission &bull; ACL Rolling Review 2026
+    MMAG
 </div>
+
+<script>
+$(document).ready(function() {
+    // Main Set
+    var table = $('#mainTable').DataTable({
+        searching: false,
+        paging: false,
+        info: false,
+        order: [],
+        columnDefs: [
+            { targets: [0], orderable: false },
+            { targets: [3,4,5,7,8,9], orderSequence: ['desc','asc'] },
+            { targets: [1,2,6], orderSequence: ['asc','desc'] }
+        ]
+    });
+    $('#model-header').on('click', function() {
+        table.order([]).draw();
+    });
+
+    // Voice Cloning Set
+    var voiceTable = $('#voiceTable').DataTable({
+        searching: false,
+        paging: false,
+        info: false,
+        order: [],
+        columnDefs: [
+            { targets: [0], orderable: false },
+            { targets: [3,4,5,7,8,9,10], orderSequence: ['desc','asc'] },
+            { targets: [1,2,6], orderSequence: ['asc','desc'] }
+        ]
+    });
+    $('#voice-model-header').on('click', function() {
+        voiceTable.order([]).draw();
+    });
+
+    // Timestamp Set
+    var timestampTable = $('#timestampTable').DataTable({
+        searching: false,
+        paging: false,
+        info: false,
+        order: [],
+        columnDefs: [
+            { targets: [0], orderable: false },
+            { targets: [3,4,5,7,8,9,10,11], orderSequence: ['desc','asc'] },
+            { targets: [1,2,6], orderSequence: ['asc','desc'] }
+        ]
+    });
+    $('#timestamp-model-header').on('click', function() {
+        timestampTable.order([]).draw();
+    });
+});
+</script>
 
 </body>
 </html>
+
